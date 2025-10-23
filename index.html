@@ -196,6 +196,11 @@
   </div>
   
   <script>
+    function speech(javob){
+      const utter=new SpeechSynthesisUtterance(javob);
+      utter.lang="ru-Ru"
+      speechSynthesis.speak(utter)
+    }
 function appendMessage(text, sender) {
   const chat = document.getElementById("out");
   const msg = document.createElement("div");
@@ -236,6 +241,7 @@ function poisk(){
     chat.removeChild(chat.lastChild); // удалить "Печатает..."
     const botReply = json.choices?.[0]?.message?.content || "Ошибка ответа 😕";
     appendMessage(botReply, "bot");
+    speech(botReply)
   })
   .catch(err => {
     const chat = document.getElementById("out");
