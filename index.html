@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Groq Chat</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #121212, #1e1e1e);
+      color: #eaeaea;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h3 {
+      font-size: 26px;
+      margin-bottom: 10px;
+      color: #00ffa2;
+      text-shadow: 0 0 8px rgba(0, 255, 162, 0.6);
+      text-align: center;
+    }
+
+    .top-bar {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    select {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background-color: #2b2b2b;
+      color: #fff;
+      font-size: 15px;
+      box-shadow: 0 0 8px rgba(0,255,162,0.3);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .chat-box {
+      width: 100%;
+      max-width: 600px;
+      flex-grow: 1;
+      background-color: #222;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 15px;
+      overflow-y: auto;
+      box-shadow: 0 0 15px rgba(0,255,162,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scroll-behavior: smooth;
+    }
+
+    .msg {
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 80%;
+      line-height: 1.4;
+      word-wrap: break-word;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #00ffa2;
+      color: #000;
+      border-top-right-radius: 0;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: #2b2b2b;
+      border-top-left-radius: 0;
+      color: #fff;
+    }
+
+    .input-area {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+      margin-top: 15px;
+    }
+
+    #knopkaId {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px 0 0 8px;
+      background-color: #2b2b2b;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      box-shadow: 0 0 8px rgba(0,255,162,0.2);
+    }
+
+    #knopkaId:focus {
+      box-shadow: 0 0 10px rgba(0,255,162,0.5);
+    }
+
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 0 8px 8px 0;
+      background-color: #00ffa2;
+      color: #000;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00c47a;
+      transform: scale(1.05);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    /* Мобильная адаптация */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      h3 {
+        font-size: 22px;
+      }
+
+      select {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      .chat-box {
+        height: 70vh;
+        padding: 10px;
+      }
+
+      #knopkaId {
+        font-size: 15px;
+        padding: 10px;
+      }
+
+      button {
+        font-size: 15px;
+        padding: 10px 14px;
+      }
+    }
+
+    ::selection {
+      background: #00ffa2;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <h3>Groq Chat</h3>
+
+  <div class="top-bar">
+    <select id="modelSelect">
+      <option value="llama-3.3-70b-versatile">LLaMA 3.3 70B (Versatile)</option>
+      <option value="gemma2-27b-it">Gemma 2 27B (Google)</option>
+      <option value="qwen/qwen2.5-32b">Qwen 2.5 32B</option>
+      <option value="mixtral-8x7b">Mixtral 8x7B</option>
+    </select>
+  </div>
+
+  <div class="chat-box" id="out">
+    <div class="msg bot">Привет! 👋 Я Groq-бот. Выбери модель и задай вопрос.</div>
+  </div>
+
+  <div class="input-area">
+    <input id="knopkaId" type="text" placeholder="Введите сообщение...">
+    <button onclick="poisk()">➤</button>
+  </div>
+  
+  <script>
+function appendMessage(text, sender) {
+  const chat = document.getElementById("out");
+  const msg = document.createElement("div");
+  msg.classList.add("msg", sender);
+  msg.textContent = text;
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function poisk(){ 
+  const knopka = document.getElementById("knopkaId");
+  const model = document.getElementById("modelSelect").value;
+  const userText = knopka.value.trim();
+  if (!userText) return;
+  
+  appendMessage(userText, "user");
+  knopka.value = "";
+
+  const kalit = "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"; 
+  const data = {
+    model: model,
+    messages: [{ role: "user", content: userText }]
+  };
+
+  appendMessage("Печатает...", "bot");
+
+  fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${kalit}`
+    },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(json => {
+    const chat = document.getElementById("out");
+    chat.removeChild(chat.lastChild); // удалить "Печатает..."
+    const botReply = json.choices?.[0]?.message?.content || "Ошибка ответа 😕";
+    appendMessage(botReply, "bot");
+  })
+  .catch(err => {
+    const chat = document.getElementById("out");
+    chat.removeChild(chat.lastChild);
+    appendMessage("Ошибка: " + err.message, "bot");
+  });
+}
+
+// Отправка по Enter
+document.getElementById("knopkaId").addEventListener("keydown", e => {
+  if (e.key === "Enter") poisk();
+});
+  </script>
+</body>
+</html>
