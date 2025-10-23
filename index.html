@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Groq Chat</title>
+  <title>Elbars Chat</title>
   <style>
     body {
       font-family: "Segoe UI", Arial, sans-serif;
@@ -174,19 +174,20 @@
   </style>
 </head>
 <body>
-  <h3>Groq Chat</h3>
+  <h3>Elbars Chat</h3>
 
   <div class="top-bar">
     <select id="modelSelect">
-      <option value="llama-3.3-70b-versatile">LLaMA 3.3 70B (Versatile)</option>
-      <option value="gemma2-27b-it">Gemma 2 27B (Google)</option>
-      <option value="qwen/qwen2.5-32b">Qwen 2.5 32B</option>
-      <option value="mixtral-8x7b">Mixtral 8x7B</option>
+      <option value="openai/gpt-oss-20b">openai 20B</option>
+      <option value="qwen/qwen3-32b">QWEN 32B</option>
+      <option value="groq/compound">GROQ</option>
+      <option value="llama-3.3-70b-versatile">Lama 70b</option>
+      <option value="moonshotai/kimi-k2-instruct-0905">KiMIAi</option>
     </select>
   </div>
 
   <div class="chat-box" id="out">
-    <div class="msg bot">Привет! 👋 Я Groq-бот. Выбери модель и задай вопрос.</div>
+    <div class="msg bot">Привет! 👋 Я Elbars-бот. Выбери модель и задай вопрос.</div>
   </div>
 
   <div class="input-area">
