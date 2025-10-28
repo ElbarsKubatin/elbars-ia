@@ -136,7 +136,6 @@
       transform: scale(0.98);
     }
 
-    /* Мобильная адаптация */
     @media (max-width: 600px) {
       body {
         padding: 10px;
@@ -174,7 +173,7 @@
   </style>
 </head>
 <body>
-  <h3>Elbars Chat</h3>
+  <h3>ElbarsChat</h3>
 
   <div class="top-bar">
     <select id="modelSelect">
@@ -192,11 +191,24 @@
 
   <div class="input-area">
     <input id="knopkaId" type="text" placeholder="Введите сообщение...">
-    <button onclick="poisk()">➤</button>
+    <button  onclick="poisk()">➤</button>
+    <button onclick="TrueFalse()">audio</button>
   </div>
   
   <script>
+    let buttonoff=false;
+
+    function TrueFalse() {
+      if (buttonoff===false){
+      buttonoff=true;
+      console.log("вкл")
+      }
+      else{ (buttonoff===true);
+        console.log("отл")
+      }
+    }
     function speech(javob){
+      if (buttonoff===false) return;
       const utter=new SpeechSynthesisUtterance(javob);
       utter.lang="ru-Ru"
       speechSynthesis.speak(utter)
