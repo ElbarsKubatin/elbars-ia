@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,7 +44,7 @@
       background-color: #2b2b2b;
       color: #fff;
       font-size: 15px;
-      box-shadow: 0 0 8px rgba(0,255,162,0.3);
+      box-shadow: 0 0 8px rgba(0, 255, 162, 0.3);
       outline: none;
       cursor: pointer;
     }
@@ -57,7 +58,7 @@
       border-radius: 12px;
       padding: 15px;
       overflow-y: auto;
-      box-shadow: 0 0 15px rgba(0,255,162,0.1);
+      box-shadow: 0 0 15px rgba(0, 255, 162, 0.1);
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -74,8 +75,15 @@
     }
 
     @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(10px);}
-      to {opacity: 1; transform: translateY(0);}
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .user {
@@ -108,11 +116,11 @@
       color: #fff;
       font-size: 16px;
       outline: none;
-      box-shadow: 0 0 8px rgba(0,255,162,0.2);
+      box-shadow: 0 0 8px rgba(0, 255, 162, 0.2);
     }
 
     #knopkaId:focus {
-      box-shadow: 0 0 10px rgba(0,255,162,0.5);
+      box-shadow: 0 0 10px rgba(0, 255, 162, 0.5);
     }
 
     button {
@@ -172,6 +180,7 @@
     }
   </style>
 </head>
+
 <body>
   <h3>ElbarsChat</h3>
 
@@ -191,82 +200,86 @@
 
   <div class="input-area">
     <input id="knopkaId" type="text" placeholder="Введите сообщение...">
-    <button  onclick="poisk()">➤</button>
-    <button onclick="TrueFalse()">audio</button>
+    <button onclick="poisk()">➤</button>
+    <button onclick="TrueFalse()" id="btnAudio">🔊</button>
   </div>
-  
+
   <script>
-    let buttonoff=false;
+    let buttonoff = true;
 
     function TrueFalse() {
-      if (buttonoff===false){
-      buttonoff=true;
-      console.log("вкл")
+      if (buttonoff === false) {
+        buttonoff = true;
+        document.getElementById('btnAudio').innerHTML="🔊"
+
       }
-      else{ (buttonoff===true);
-        console.log("отл")
+      else {
+        (buttonoff === true);
+        buttonoff = false
+        document.getElementById('btnAudio').innerHTML="🔇"
+
       }
     }
-    function speech(javob){
-      if (buttonoff===false) return;
-      const utter=new SpeechSynthesisUtterance(javob);
-      utter.lang="ru-Ru"
-      speechSynthesis.speak(utter)
+    function speech(javob) {
+      if (buttonoff === true) {
+        const utter = new SpeechSynthesisUtterance(javob);
+        utter.lang = "ru-Ru"
+        speechSynthesis.speak(utter)
+      }
     }
-function appendMessage(text, sender) {
-  const chat = document.getElementById("out");
-  const msg = document.createElement("div");
-  msg.classList.add("msg", sender);
-  msg.textContent = text;
-  chat.appendChild(msg);
-  chat.scrollTop = chat.scrollHeight;
-}
+    function appendMessage(text, sender) {
+      const chat = document.getElementById("out");
+      const msg = document.createElement("div");
+      msg.classList.add("msg", sender);
+      msg.textContent = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-function poisk(){ 
-  const knopka = document.getElementById("knopkaId");
-  const model = document.getElementById("modelSelect").value;
-  const userText = knopka.value.trim();
-  if (!userText) return;
-  
-  appendMessage(userText, "user");
-  knopka.value = "";
+    function poisk() {
+      const knopka = document.getElementById("knopkaId");
+      const model = document.getElementById("modelSelect").value;
+      const userText = knopka.value.trim();
+      if (!userText) return;
 
-  const kalit = "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"; 
-  const data = {
-    model: model,
-    messages: [{ role: "user", content: userText }]
-  };
+      appendMessage(userText, "user");
+      knopka.value = "";
 
-  appendMessage("Печатает...", "bot");
+      const kalit = "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";
+      const data = {
+        model: model,
+        messages: [{ role: "user", content: userText }]
+      };
 
-  fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${kalit}`
-    },
-    body: JSON.stringify(data)
-  })
-  .then(res => res.json())
-  .then(json => {
-    const chat = document.getElementById("out");
-    chat.removeChild(chat.lastChild); // удалить "Печатает..."
-    const botReply = json.choices?.[0]?.message?.content || "Ошибка ответа 😕";
-    appendMessage(botReply, "bot");
-    speech(botReply)
-  })
-  .catch(err => {
-    const chat = document.getElementById("out");
-    chat.removeChild(chat.lastChild);
-    appendMessage("Ошибка: " + err.message, "bot");
-  });
-}
+      appendMessage("Печатает...", "bot");
 
-// Отправка по Enter
-document.getElementById("knopkaId").addEventListener("keydown", e => {
-  if (e.key === "Enter") poisk();
-});
+      fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${kalit}`
+        },
+        body: JSON.stringify(data)
+      })
+        .then(res => res.json())
+        .then(json => {
+          const chat = document.getElementById("out");
+          chat.removeChild(chat.lastChild); // удалить "Печатает..."
+          const botReply = json.choices?.[0]?.message?.content || "Ошибка ответа 😕";
+          appendMessage(botReply, "bot");
+          speech(botReply)
+        })
+        .catch(err => {
+          const chat = document.getElementById("out");
+          chat.removeChild(chat.lastChild);
+          appendMessage("Ошибка: " + err.message, "bot");
+        });
+    }
+
+    document.getElementById("knopkaId").addEventListener("keydown", e => {
+      if (e.key === "Enter") poisk();
+    });
   </script>
 </body>
-</html>
 
+</html>
